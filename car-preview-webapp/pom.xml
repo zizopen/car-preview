@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>vsoft.mgnl.preview</groupId>
+        <artifactId>car-preview</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>car-preview-webapp</artifactId>
+    <name>car-preview: webapp</name>
+    <packaging>war</packaging>
+
+    <properties>
+        <tomcat.http.port>8080</tomcat.http.port>
+        <tomcat.https.port>8082</tomcat.https.port>
+    </properties>
+
+    <dependencies>
+        <!-- Add your project specific dependencies here: -->
+
+        <!-- Overlay Magnolia Empty Webapp. Alternatively, use the bundled-webapp or the enterprise-webapp. Dependencies versions are already imported by parent, so no need to replicate here. -->
+        <dependency>
+            <groupId>info.magnolia</groupId>
+            <artifactId>magnolia-empty-webapp</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>info.magnolia</groupId>
+            <artifactId>magnolia-empty-webapp</artifactId>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <artifactId>car-content</artifactId>
+            <groupId>vsoft.mgnl.preview</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>car-rest</artifactId>
+            <groupId>vsoft.mgnl.preview</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>car-theme</artifactId>
+            <groupId>vsoft.mgnl.preview</groupId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>car-preview-webapp</finalName>
+        <resources>
+            <!-- Filter all *.properties files within resources directory and keep other files as they are. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                    <exclude>**/webapp.xml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/webapp.xml</include>
+                    <include>**/META-INF/magnolia/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.0</version>
+                    <configuration>
+                        <path>/${project.build.finalName}</path>
+                        <port>${tomcat.http.port}</port>
+                        <warDirectory>${project.build.directory}/${project.build.finalName}
+                        </warDirectory>
+                        <url>http://localhost:${tomcat.http.port}/manager</url>
+                        <!-- Until https://issues.apache.org/jira/browse/MTOMCAT-119 is fixed and released (in version 2.1), an empty context.xml is required -->
+                        <contextFile>${basedir}/src/tomcat/context.xml</contextFile>
+                        <uriEncoding>UTF-8</uriEncoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- Merges magnolia magnolia emtpy webapp files into the war of this webapp.
+                 Don't remove it. This prevents double files by excluding the lib, config and web.xml.
+
+                 See http://maven.apache.org/plugins/maven-war-plugin/ -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <artifactId>magnolia-empty-webapp</artifactId>
+                            <groupId>info.magnolia</groupId>
+                            <excludes>
+                                <exclude>WEB-INF/web.xml</exclude>
+                                <exclude>WEB-INF/config/**</exclude>
+                                <exclude>WEB-INF/lib/**</exclude>
+                            </excludes>
+                        </overlay>
+                        <!--overlay>
+                            <artifactId>magnolia-bundled-webapp</artifactId>
+                            <groupId>info.magnolia.bundle</groupId>
+                            <excludes>
+                                <exclude>WEB-INF/web.xml</exclude>
+                                <exclude>WEB-INF/config/**</exclude>
+                                <exclude>WEB-INF/lib/**</exclude>
+                            </excludes>
+                        </overlay-->
+                    </overlays>
+                </configuration>
+            </plugin>
+
+            <!-- exclude integration tests from running in normal test phase -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/Abstract*.java</exclude>
+                        <exclude>**/IT*.java</exclude>
+                        <exclude>**/*IT.java</exclude>
+                        <exclude>**/*ITCase.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Use this profile along with 'mvn clean' to clean everything including the content repository and log files. -->
+        <profile>
+            <id>cleaner</id>
+            <build>
+                <plugins>
+                    <!-- The Clean Plugin is used when you want to remove files generated at build-time in a project's
+                         directory.
+                         See http://maven.apache.org/plugins/maven-clean-plugin -->
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>logs</include>
+                                        <include>overlays</include>
+                                        <include>repositories</include>
+                                        <include>derby.log</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Use the rapid profile to speed up your build process. It skips unit-tests and checkstyle.
+             Keep in mind that you have to run a complete build - 'mvn package' without any profile - before you
+             check-in any source file to make sure that the build will not fail on integration. -->
+        <profile>
+            <id>rapid</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <checkstyle.skip>true</checkstyle.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>tomcat</id>
+            <properties>
+                <tomcat.http.port>${tomcat.https.port}</tomcat.http.port>
+            </properties>
+            <build>
+                <finalName>author</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tomcat-public</id>
+            <properties>
+                <tomcat.http.port>${tomcat.http.port}</tomcat.http.port>
+            </properties>
+            <build>
+                <finalName>ROOT</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
