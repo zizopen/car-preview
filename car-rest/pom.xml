@@ -7,6 +7,7 @@
         <groupId>vsoft.mgnl.preview</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <groupId>vsoft.mgnl.preview</groupId>
     <artifactId>car-rest</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>

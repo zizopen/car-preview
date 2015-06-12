@@ -51,6 +51,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency -->
+
             <!-- Importing dependencyManagement of CE bundle. This means you don't have to specify versions of modules you depend on (unless you want a different version than that of the bundle). -->
             <dependency>
                 <groupId>info.magnolia.bundle</groupId>
@@ -59,17 +60,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <artifactId>car-content</artifactId>
-                <groupId>vsoft.mgnl.preview</groupId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <artifactId>car-common</artifactId>
-                <groupId>vsoft.mgnl.preview</groupId>
-                <version>${project.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -133,11 +123,12 @@
                                 of dots. -->
                             <javaScriptBuildnumberCallback>
                                     var idx = branch.indexOf("/");
-                                    var str = branch;
+                                    var
+                                            str = branch;
                                     if (idx &gt;= 0) {
                                         str = branch.substring(idx + 1);
                                     }
-                                    str += "-" + commitsCount + "-" + shortRevision;
+                                    str + "-" + commitsCount + "-" + shortRevision
                             </javaScriptBuildnumberCallback>
                         </configuration>
                     </execution>

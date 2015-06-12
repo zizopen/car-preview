@@ -11,10 +11,12 @@
     <artifactId>car-preview-webapp</artifactId>
     <name>car-preview: webapp</name>
     <packaging>war</packaging>
+
     <properties>
         <tomcat.http.port>8080</tomcat.http.port>
         <tomcat.https.port>8082</tomcat.https.port>
     </properties>
+
     <dependencies>
         <!-- Add your project specific dependencies here: -->
 
