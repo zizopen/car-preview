@@ -6,4 +6,6 @@ package com.vsoft.car.content.commands;
  * @author hung.vu02
  */
 public class MarkAssetFolderAsDeletedCommand {
+    public MarkAssetFolderAsDeletedCommand() {
+    }
 }
