@@ -1,7 +1,7 @@
 package com.vsoft.car.content.commands;
 
 /**
- * DES
+ * DES.
  *
  * @author hung.vu02
  */
